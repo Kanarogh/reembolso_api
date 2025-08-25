@@ -1,0 +1,138 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  COLABORADOR
+  GESTOR
+  RH
+  FINANCEIRO
+}
+
+enum ReportStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED_MANAGER
+  VALIDATED_HR
+  PAID
+  REJECTED
+  ADJUSTMENT_REQUESTED
+}
+
+enum ExpenseType {
+  ALIMENTACAO
+  HOSPEDAGEM
+  PEDAGIO
+  COMBUSTIVEL
+  ONIBUS
+  LOCACAO
+  EXTRA
+}
+
+enum LocalType {
+  CAPITAL
+  INTERIOR
+}
+
+enum MealType {
+  CAFE
+  ALMOCO
+  JANTAR
+  LANCHE
+}
+
+model User {
+  id            Int            @id @default(autoincrement()) // MUDOU DE STRING PARA INT
+  name          String
+  email         String         @unique
+  passwordHash  String
+  role          Role           @default(COLABORADOR)
+  reports       Report[]
+  refreshTokens RefreshToken[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model Report {
+  id               Int            @id @default(autoincrement()) // MUDOU DE STRING PARA INT
+  userId           Int // MUDOU DE STRING PARA INT
+  user             User           @relation(fields: [userId], references: [id])
+  periodFrom       DateTime
+  periodTo         DateTime
+  client           String?
+  status           ReportStatus   @default(DRAFT)
+  totalGasto       Float          @default(0)
+  totalConsiderado Float          @default(0)
+  expenses         Expense[]
+  approvals        ApprovalStep[]
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([status])
+}
+
+model Expense {
+  id                   Int          @id @default(autoincrement())
+  reportId             Int
+  report               Report       @relation(fields: [reportId], references: [id], onDelete: Cascade) // <-- ADICIONE AQUI
+  data                 DateTime
+  tipo                 ExpenseType
+  descricao            String?
+  valorGasto           Float
+  local                LocalType?
+  mealType             MealType?
+  foraDoMunicipio      Boolean      @default(false)
+  contemItensProibidos Boolean      @default(false)
+  diarias              Int?
+  checkin              DateTime?
+  valorConsiderado     Float        @default(0)
+  policyNotes          String?
+  attachments          Attachment[]
+
+  @@index([reportId, data])
+}
+
+model Attachment {
+  id          Int      @id @default(autoincrement())
+  expenseId   Int
+  expense Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  fileName    String
+  contentType String
+  size        Int
+  path        String
+  createdAt   DateTime @default(now())
+
+  @@index([expenseId])
+}
+
+model ApprovalStep {
+  id           Int      @id @default(autoincrement())
+  reportId     Int
+  report Report @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  approverId   String
+  approverName String
+  when         DateTime @default(now())
+  decision     String
+  comment      String?
+
+  @@index([reportId, when(sort: Desc)])
+}
+
+model RefreshToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  expiresAt DateTime
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}

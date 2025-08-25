@@ -1,0 +1,15 @@
+{
+  // Visit https://aka.ms/tsconfig to read more about this file
+    "compilerOptions": {
+    // --- Opções Essenciais para ES Modules ---
+    "target": "ES2022",
+    "module": "NodeNext",        // A MUDANÇA PRINCIPAL: Gera código ESM moderno para Node.
+    "moduleResolution": "NodeNext", // Estratégia de resolução correspondente.
+
+    // --- Boas Práticas (a maioria se mantém) ---
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true
+  }
+}
