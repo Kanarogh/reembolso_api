@@ -1,11 +1,5 @@
 // src/modules/reports/expenses.service.ts
 
-<<<<<<< HEAD
-import { prisma } from '../../server.js'
-import { z } from 'zod'
-import { createExpenseBodySchema } from './dto/create-expense.dto.js'
-import { PolicyEngineService } from '../../services/policy-engine.service.js'
-=======
 import { randomUUID } from 'crypto'
 import { promises as fs } from 'fs'
 import path from 'path'
@@ -17,15 +11,12 @@ import { updateExpenseBodySchema } from '../reports/dto/update-expense.dto.js'
 import { createExpenseBodySchema } from './dto/create-expense.dto.js'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
->>>>>>> 9cabe6f (conectouuuu)
 // CORREÇÃO 1: Caminho da importação ajustado
 
 type CreateExpenseRequest = z.infer<typeof createExpenseBodySchema> & {
   reportId: number
   userId: number
 }
-<<<<<<< HEAD
-=======
 type UpdateExpenseRequest = z.infer<typeof updateExpenseBodySchema>
 
 interface AddAttachmentRequest {
@@ -36,7 +27,6 @@ interface AddAttachmentRequest {
     buffer: Buffer
   }
 }
->>>>>>> 9cabe6f (conectouuuu)
 
 export class ExpensesService {
   private policyEngine = new PolicyEngineService()
@@ -125,9 +115,6 @@ export class ExpensesService {
 
     return { report: updatedReport }
   }
-<<<<<<< HEAD
-}
-=======
   // NOVO MÉTODO
 // GARANTA QUE SEU MÉTODO UPDATE ESTEJA ASSIM
   async update(
@@ -215,4 +202,3 @@ export class ExpensesService {
     return { attachment }
   }
 }
->>>>>>> 9cabe6f (conectouuuu)

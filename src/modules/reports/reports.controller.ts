@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-import { FastifyRequest, FastifyReply } from 'fastify'
-import { createReportBodySchema } from './dto/create-report.dto.js'
-import { ReportsService } from './reports.service.js'
-import { getReportParamsSchema } from './dto/get-report.dto.js'
-=======
 import { ReportStatus, Role } from '@prisma/client'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import z from 'zod'
@@ -11,7 +5,6 @@ import { createReportBodySchema } from './dto/create-report.dto.js'
 import { getReportParamsSchema } from './dto/get-report.dto.js'
 import { updateReportStatusBodySchema, updateReportStatusParamsSchema } from './dto/update-report-status.dto.js'
 import { ReportsService } from './reports.service.js'
->>>>>>> 9cabe6f (conectouuuu)
 
 export class ReportsController {
   private reportsService = new ReportsService()
@@ -35,15 +28,6 @@ export class ReportsController {
       return reply.status(500).send({ message: 'Erro interno do servidor.' })
     }
   }
-<<<<<<< HEAD
-  async list(request: FastifyRequest, reply: FastifyReply) {
-    const userId = Number(request.user!.sub) // Pega o ID do usuário logado (do token)
-
-    try {
-      const { reports } = await this.reportsService.listByUser(userId)
-      return reply.status(200).send({ data: reports })
-
-=======
 
 
  async list(request: FastifyRequest, reply: FastifyReply) {
@@ -65,7 +49,6 @@ export class ReportsController {
       // 3. Passamos o 'user' e o 'status' validado para o serviço
       const { reports } = await this.reportsService.list(user, status)
       return reply.status(200).send({ data: reports })
->>>>>>> 9cabe6f (conectouuuu)
     } catch (error) {
       return reply.status(500).send({ message: 'Erro interno do servidor.' })
     }
@@ -73,12 +56,6 @@ export class ReportsController {
   async findById(request: FastifyRequest, reply: FastifyReply) {
     // Valida e extrai o ID dos parâmetros da URL
     const { id } = getReportParamsSchema.parse(request.params)
-<<<<<<< HEAD
-    const userId = Number(request.user!.sub) 
-
-    try {
-      const { report } = await this.reportsService.findById(id, userId)
-=======
 
     // 1. Montamos o objeto completo do usuário logado
     const user = {
@@ -89,7 +66,6 @@ export class ReportsController {
     try {
       // 2. Passamos o ID do relatório e o objeto 'user' para o serviço
       const { report } = await this.reportsService.findById(id, user)
->>>>>>> 9cabe6f (conectouuuu)
       return reply.status(200).send({ data: report })
     } catch (error) {
       if (error instanceof Error && error.message.includes('encontrado')) {
@@ -98,11 +74,8 @@ export class ReportsController {
       return reply.status(500).send({ message: 'Erro interno do servidor.' })
     }
   }
-<<<<<<< HEAD
-=======
 
 
->>>>>>> 9cabe6f (conectouuuu)
   async delete(request: FastifyRequest, reply: FastifyReply) {
     const { id } = getReportParamsSchema.parse(request.params)
     const userId = Number(request.user!.sub)
@@ -116,9 +89,6 @@ export class ReportsController {
       throw error
     }
   }
-<<<<<<< HEAD
-}
-=======
   async submit(request: FastifyRequest, reply: FastifyReply) {
     const { id } = getReportParamsSchema.parse(request.params)
     const userId = Number(request.user!.sub)
@@ -144,4 +114,3 @@ export class ReportsController {
     }
   }
 }
->>>>>>> 9cabe6f (conectouuuu)

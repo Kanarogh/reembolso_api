@@ -1,38 +1,48 @@
 // src/hooks/role.hook.ts
-
-import { Role } from '@prisma/client'
-import { FastifyReply, FastifyRequest } from 'fastify'
+import type { Role } from '@prisma/client'
+import type { FastifyReply, FastifyRequest } from 'fastify'
 import { authHook } from './auth.hook.js'
 
-// 1. Mapeamos a hierarquia. Números menores são mais poderosos.
+// Hierarquia: número menor = mais poder
 const roleHierarchy: Record<Role, number> = {
   ADM: 1,
   RH: 2,
-  FINANCEIRO: 2, // Mesmo nível do RH
+  FINANCEIRO: 2,
   GESTOR: 3,
   COLABORADOR: 4,
 }
 
-// 2. A função agora recebe o "papel mínimo" necessário para acessar a rota
-export const verifyRole = (requiredRole: Role) => {
-  return async (request: FastifyRequest, reply: FastifyReply) => {
-    // 3. Primeiro, garantimos que o usuário está autenticado, chamando o outro hook
+/**
+ * Aceita:
+ *  - um papel mínimo (ex.: 'GESTOR') -> usuário precisa ter nível <= exigido
+ *  - uma lista de papéis permitidos (ex.: ['GESTOR','RH','FINANCEIRO'])
+ */
+export const verifyRole =
+  (required: Role | Role[]) =>
+  async (request: FastifyRequest, reply: FastifyReply) => {
+    // garante autenticação e popula request.user
     await authHook(request, reply)
 
-    // Se a autenticação falhar, o código abaixo não será executado.
-    const userRole = request.user?.role as Role
-
+    const userRole = request.user?.role as Role | undefined
     if (!userRole) {
-        return reply.status(403).send({ message: 'Acesso negado. Papel do usuário não identificado.' })
+      return reply.status(403).send({ message: 'Acesso negado. Papel do usuário não identificado.' })
     }
 
-    const userLevel = roleHierarchy[userRole];
-    const requiredLevel = roleHierarchy[requiredRole];
+    // ADM sempre pode
+    if (userRole === 'ADM') return
 
-    // 4. Comparamos os níveis: se o nível do usuário for menor ou igual
-    // ao nível exigido, ele tem permissão.
+    if (Array.isArray(required)) {
+      // lista explícita de papéis
+      if (!required.includes(userRole)) {
+        return reply.status(403).send({ message: 'Acesso negado. Permissões insuficientes.' })
+      }
+      return
+    }
+
+    // papel mínimo pela hierarquia
+    const userLevel = roleHierarchy[userRole]
+    const requiredLevel = roleHierarchy[required]
     if (userLevel > requiredLevel) {
       return reply.status(403).send({ message: 'Acesso negado. Permissões insuficientes.' })
     }
   }
-}

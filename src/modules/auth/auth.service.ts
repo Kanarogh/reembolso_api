@@ -1,18 +1,4 @@
 // src/modules/auth/auth.service.ts
-<<<<<<< HEAD
-import { prisma } from "../../server.js";
-import bcrypt from "bcryptjs";
-import jwt, { type Secret, type SignOptions } from "jsonwebtoken";
-import { z } from "zod";
-import { registerBodySchema } from "./dto/register.dto.js";
-import { loginBodySchema } from "./dto/login.dto.js";
-import { randomBytes } from "crypto";
-import dayjs from "dayjs";
-import { env } from "../../env/index.js";
-
-type RegisterRequest = z.infer<typeof registerBodySchema>;
-type LoginRequest = z.infer<typeof loginBodySchema>;
-=======
 import bcrypt from "bcryptjs";
 import { randomBytes } from "crypto";
 import dayjs from "dayjs";
@@ -27,7 +13,6 @@ import { registerBodySchema } from "./dto/register.dto.js";
 type RegisterRequest = z.infer<typeof registerBodySchema>;
 type LoginRequest = z.infer<typeof loginBodySchema>;
 type ChangePasswordRequest = z.infer<typeof changePasswordBodySchema>;
->>>>>>> 9cabe6f (conectouuuu)
 
 interface ITokenPayload {
   role: string;
@@ -43,11 +28,7 @@ export class AuthService {
 
     const passwordHash = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({
-<<<<<<< HEAD
-      data: { name, email, passwordHash },
-=======
       data: { name, email, passwordHash, mustChangePassword: false },
->>>>>>> 9cabe6f (conectouuuu)
     });
     return { user };
   }
@@ -56,14 +37,11 @@ export class AuthService {
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) throw new Error("Credenciais inválidas.");
 
-<<<<<<< HEAD
-=======
      // VERIFICAÇÃO DE CONTA DESATIVADA
     if (user.deactivatedAt) {
       throw new Error("Esta conta de usuário foi desativada.");
     }
 
->>>>>>> 9cabe6f (conectouuuu)
     const isPasswordCorrect = await bcrypt.compare(password, user.passwordHash);
     if (!isPasswordCorrect) throw new Error("Credenciais inválidas.");
 
@@ -130,8 +108,6 @@ export class AuthService {
 
     return { accessToken: newAccessToken };
   }
-<<<<<<< HEAD
-=======
 
    async changePassword(userId: number, { newPassword }: ChangePasswordRequest) {
         const passwordHash = await bcrypt.hash(newPassword, 10);
@@ -144,5 +120,4 @@ export class AuthService {
             }
         })
     }
->>>>>>> 9cabe6f (conectouuuu)
 }

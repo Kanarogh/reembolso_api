@@ -10,7 +10,7 @@ export class ApprovalsController {
     const { decision, comment } = createApprovalBodySchema.parse(request.body)
     const approver = {
       id: Number(request.user!.sub),
-      name: 'Nome do Gestor (Placeholder)', // No futuro, buscaríamos o nome no banco
+      name: (request.user as any)?.name ?? 'Gestor',
     }
 
     try {

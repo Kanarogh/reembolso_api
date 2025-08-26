@@ -1,17 +1,9 @@
-<<<<<<< HEAD
-import { FastifyRequest, FastifyReply } from 'fastify'
-
-import { createExpenseBodySchema, createExpenseParamsSchema } from './dto/create-expense.dto.js'
-import { ExpensesService } from './expenses.services.js'
-import { deleteExpenseParamsSchema } from './dto/delete-expense.dto.js'
-=======
 import { FastifyReply, FastifyRequest } from 'fastify'
 
 import { updateExpenseBodySchema, updateExpenseParamsSchema } from '../reports/dto/update-expense.dto.js'
 import { createExpenseBodySchema, createExpenseParamsSchema } from './dto/create-expense.dto.js'
 import { deleteExpenseParamsSchema } from './dto/delete-expense.dto.js'
 import { ExpensesService } from './expenses.services.js'
->>>>>>> 9cabe6f (conectouuuu)
 
 export class ExpensesController {
   private expensesService = new ExpensesService()
@@ -45,9 +37,6 @@ export class ExpensesController {
       throw error
     }
   }
-<<<<<<< HEAD
-}
-=======
    async update(request: FastifyRequest, reply: FastifyReply) {
     const { reportId, expenseId } = updateExpenseParamsSchema.parse(request.params)
     const data = updateExpenseBodySchema.parse(request.body)
@@ -92,4 +81,3 @@ export class ExpensesController {
     }
   }
 }
->>>>>>> 9cabe6f (conectouuuu)

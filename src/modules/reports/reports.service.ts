@@ -1,12 +1,3 @@
-<<<<<<< HEAD
-import { z } from 'zod'
-import { prisma } from '../../server.js'
-import { createReportBodySchema } from './dto/create-report.dto.js'
-
-type CreateReportRequest = z.infer<typeof createReportBodySchema> & {
-  userId: number
-}
-=======
 import { ReportStatus, Role } from "@prisma/client";
 import dayjs from "dayjs";
 import { z } from "zod";
@@ -16,7 +7,6 @@ import { createReportBodySchema } from "./dto/create-report.dto.js";
 type CreateReportRequest = z.infer<typeof createReportBodySchema> & {
   userId: number;
 };
->>>>>>> 9cabe6f (conectouuuu)
 
 export class ReportsService {
   async create({ userId, periodFrom, periodTo, client }: CreateReportRequest) {
@@ -28,42 +18,6 @@ export class ReportsService {
         client,
         // O status 'DRAFT' é o padrão, conforme o schema.prisma
       },
-<<<<<<< HEAD
-    })
-    return { report }
-  }
-   async listByUser(userId: number) {
-    const reports = await prisma.report.findMany({
-      where: {
-        userId: userId,
-      },
-      orderBy: {
-        createdAt: 'desc', // Mostra os mais recentes primeiro
-      },include: {
-      expenses: true, // <-- ADICIONAMOS AQUI TAMBÉM
-    },
-    })
-
-    return { reports }
-  }
-  async findById(reportId: number, userId: number) {
-    // Busca por um relatório que tenha o ID E o userId correspondentes
-    const report = await prisma.report.findUnique({
-      where: {
-        id: reportId,
-        userId: userId, // ESSA LINHA É A GARANTIA DE SEGURANÇA
-      },include: {
-      expenses: true, // <-- ADICIONAMOS AQUI TAMBÉM
-    },
-    })
-
-    if (!report) {
-      // Lança um erro se o relatório não for encontrado ou não pertencer ao usuário
-      throw new Error('Relatório não encontrado.')
-    }
-
-    return { report }
-=======
     });
     return { report };
   }
@@ -161,7 +115,6 @@ export class ReportsService {
     }
 
     return { report };
->>>>>>> 9cabe6f (conectouuuu)
   }
   async delete(reportId: number, userId: number) {
     // 1. Garante que o relatório existe, pertence ao usuário e está em modo Rascunho
@@ -169,15 +122,9 @@ export class ReportsService {
       where: {
         id: reportId,
         userId: userId,
-<<<<<<< HEAD
-        status: 'DRAFT',
-      },
-    })
-=======
         status: "DRAFT",
       },
     });
->>>>>>> 9cabe6f (conectouuuu)
 
     // 2. Apaga o relatório
     // Graças ao 'onDelete: Cascade', o Prisma irá apagar todas as despesas e aprovações junto.
@@ -185,13 +132,6 @@ export class ReportsService {
       where: {
         id: reportId,
       },
-<<<<<<< HEAD
-    })
-
-    // Para DELETE, não precisamos retornar nada.
-  }
-}
-=======
     });
 
     // Para DELETE, não precisamos retornar nada.
@@ -272,4 +212,3 @@ export class ReportsService {
     return { report: updatedReport };
   }
 }
->>>>>>> 9cabe6f (conectouuuu)
