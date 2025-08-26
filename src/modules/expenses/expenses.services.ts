@@ -1,15 +1,42 @@
 // src/modules/reports/expenses.service.ts
 
+<<<<<<< HEAD
 import { prisma } from '../../server.js'
 import { z } from 'zod'
 import { createExpenseBodySchema } from './dto/create-expense.dto.js'
 import { PolicyEngineService } from '../../services/policy-engine.service.js'
+=======
+import { randomUUID } from 'crypto'
+import { promises as fs } from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
+import { z } from 'zod'
+import { prisma } from '../../server.js'
+import { PolicyEngineService } from '../../services/policy-engine.service.js'
+import { updateExpenseBodySchema } from '../reports/dto/update-expense.dto.js'
+import { createExpenseBodySchema } from './dto/create-expense.dto.js'
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+>>>>>>> 9cabe6f (conectouuuu)
 // CORREÇÃO 1: Caminho da importação ajustado
 
 type CreateExpenseRequest = z.infer<typeof createExpenseBodySchema> & {
   reportId: number
   userId: number
 }
+<<<<<<< HEAD
+=======
+type UpdateExpenseRequest = z.infer<typeof updateExpenseBodySchema>
+
+interface AddAttachmentRequest {
+  ids: { reportId: number; expenseId: number; userId: number }
+  file: {
+    fileName: string
+    mimetype: string
+    buffer: Buffer
+  }
+}
+>>>>>>> 9cabe6f (conectouuuu)
 
 export class ExpensesService {
   private policyEngine = new PolicyEngineService()
@@ -98,4 +125,94 @@ export class ExpensesService {
 
     return { report: updatedReport }
   }
+<<<<<<< HEAD
 }
+=======
+  // NOVO MÉTODO
+// GARANTA QUE SEU MÉTODO UPDATE ESTEJA ASSIM
+  async update(
+    ids: { reportId: number; expenseId: number; userId: number },
+    data: UpdateExpenseRequest,
+  ) {
+    const originalExpense = await prisma.expense.findFirstOrThrow({
+      where: {
+        id: ids.expenseId,
+        reportId: ids.reportId,
+        report: {
+          userId: ids.userId,
+          status: { in: ['DRAFT', 'ADJUSTMENT_REQUESTED'] },
+        },
+      },
+    })
+
+    const newExpenseData = { ...originalExpense, ...data }
+
+    const { valorConsiderado: newValorConsiderado, policyNotes } =
+      this.policyEngine.calculateConsideredValue(newExpenseData)
+
+    const gastoDifference =
+      (data.valorGasto ?? originalExpense.valorGasto) -
+      originalExpense.valorGasto
+    const consideradoDifference =
+      newValorConsiderado - originalExpense.valorConsiderado
+
+    const [, updatedReport] = await prisma.$transaction([
+      prisma.expense.update({
+        where: { id: ids.expenseId },
+        data: {
+          ...data,
+          valorConsiderado: newValorConsiderado,
+          policyNotes,
+        },
+      }),
+      prisma.report.update({
+        where: { id: ids.reportId },
+        data: {
+          totalGasto: { increment: gastoDifference },
+          totalConsiderado: { increment: consideradoDifference },
+        },
+        include: { expenses: true, approvals: true },
+      }),
+    ])
+
+    return { report: updatedReport }
+  }
+
+   async addAttachment({ ids, file }: AddAttachmentRequest) {
+    // 1. Garante que a despesa existe e pertence ao usuário
+    const expense = await prisma.expense.findFirstOrThrow({
+      where: {
+        id: ids.expenseId,
+        reportId: ids.reportId,
+        report: { userId: ids.userId },
+      },
+    })
+
+    // 2. Cria um nome de arquivo único para evitar colisões
+    const fileId = randomUUID()
+    const fileExtension = path.extname(file.fileName)
+    const newFileName = fileId.concat(fileExtension)
+
+    // 3. Define o caminho e salva o arquivo no disco
+    // Conforme o escopo, para desenvolvimento, salvamos localmente
+    const uploadDir = path.resolve(__dirname, '..', '..', '..', 'uploads', String(ids.reportId))
+    await fs.mkdir(uploadDir, { recursive: true })
+    const filePath = path.join(uploadDir, newFileName)
+    await fs.writeFile(filePath, file.buffer)
+
+     const relativePath = `${ids.reportId}/${newFileName}`
+    // 4. Cria o registro do anexo no banco de dados
+    const attachment = await prisma.attachment.create({
+      data: {
+        expenseId: ids.expenseId,
+        fileName: file.fileName, // Nome original
+        path: relativePath, // Caminho no servidor
+        contentType: file.mimetype,
+        size: file.buffer.length,
+      },
+    })
+
+    return { attachment }
+  }
+}
+>>>>>>> 9cabe6f (conectouuuu)

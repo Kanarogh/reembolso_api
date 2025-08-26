@@ -10,6 +10,10 @@ datasource db {
 }
 
 enum Role {
+<<<<<<< HEAD
+=======
+  ADM
+>>>>>>> 9cabe6f (conectouuuu)
   COLABORADOR
   GESTOR
   RH
@@ -54,6 +58,11 @@ model User {
   email         String         @unique
   passwordHash  String
   role          Role           @default(COLABORADOR)
+<<<<<<< HEAD
+=======
+  mustChangePassword Boolean  @default(false)
+  deactivatedAt      DateTime?
+>>>>>>> 9cabe6f (conectouuuu)
   reports       Report[]
   refreshTokens RefreshToken[]
   createdAt     DateTime       @default(now())
@@ -70,6 +79,11 @@ model Report {
   status           ReportStatus   @default(DRAFT)
   totalGasto       Float          @default(0)
   totalConsiderado Float          @default(0)
+<<<<<<< HEAD
+=======
+  submissionDate   DateTime?    // <-- ADICIONE AQUI
+  expectedPaymentDate DateTime? // <-- ADICIONE AQUI
+>>>>>>> 9cabe6f (conectouuuu)
   expenses         Expense[]
   approvals        ApprovalStep[]
   createdAt        DateTime       @default(now())

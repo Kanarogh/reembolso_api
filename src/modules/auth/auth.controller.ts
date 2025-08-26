@@ -1,10 +1,19 @@
 // src/modules/auth/auth.controller.ts
 
+<<<<<<< HEAD
 import { FastifyRequest, FastifyReply } from 'fastify'
 import { AuthService } from './auth.service.js'
 import { registerBodySchema } from './dto/register.dto.js'
 import { loginBodySchema } from './dto/login.dto.js'
 import { z } from 'zod'
+=======
+import { FastifyReply, FastifyRequest } from 'fastify'
+import { z } from 'zod'
+import { AuthService } from './auth.service.js'
+import { changePasswordBodySchema } from './dto/change-password.dto.js'
+import { loginBodySchema } from './dto/login.dto.js'
+import { registerBodySchema } from './dto/register.dto.js'
+>>>>>>> 9cabe6f (conectouuuu)
 
 export class AuthController {
   private authService = new AuthService()
@@ -44,4 +53,21 @@ export class AuthController {
       throw error
     }
   }
+<<<<<<< HEAD
 }
+=======
+
+  async changePassword(request: FastifyRequest, reply: FastifyReply) {
+        const { newPassword } = changePasswordBodySchema.parse(request.body)
+        const userId = Number(request.user!.sub)
+
+        try {
+            await this.authService.changePassword(userId, { newPassword })
+            return reply.status(204).send() // 204 No Content
+        } catch (error) {
+            if (error instanceof Error) return reply.status(400).send({ message: error.message })
+            throw error
+        }
+    }
+}
+>>>>>>> 9cabe6f (conectouuuu)

@@ -6,19 +6,34 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+<<<<<<< HEAD
     "dev": "tsx watch src/server.ts"
+=======
+    "dev": "tsx watch src/server.ts",
+    "postinstall": "prisma generate"
+>>>>>>> 9cabe6f (conectouuuu)
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+<<<<<<< HEAD
     
+=======
+    "@types/jsonwebtoken": "^9.0.10",
+>>>>>>> 9cabe6f (conectouuuu)
     "@types/node": "^20.14.10",
     "prisma": "^6.14.0",
     "tsx": "^4.20.4",
     "typescript": "^5.9.2"
   },
   "dependencies": {
+<<<<<<< HEAD
+=======
+    "@fastify/cors": "^11.1.0",
+    "@fastify/multipart": "^9.0.3",
+    "@fastify/static": "^8.2.0",
+>>>>>>> 9cabe6f (conectouuuu)
     "@prisma/client": "^6.14.0",
     "bcryptjs": "^3.0.2",
     "dayjs": "^1.11.13",
